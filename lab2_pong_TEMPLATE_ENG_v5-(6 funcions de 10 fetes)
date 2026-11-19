@@ -32,7 +32,7 @@ Anti-AI-copy/paste control:
 
 import sys      # Used only for sys.exit(0): ensures clean program termination on all OSs
 import pygame   # essential for all the game rendering and play
-import random   # useful for randomising things a little bit (e.g. ball's initial direction)
+import random as rnd   # useful for randomising things a little bit (e.g. ball's initial direction)
 
 # ==============
 # Game constants
@@ -359,10 +359,15 @@ def move_paddle(current_y: int, direction: int, speed: int, height: int, paddle_
     That is when it reaches the limits (up or down) it stays there, so consider paddle_h and height here.
     """
     # TODO: put your code!!!!
-    
-    # This line of code has been left for letting the full program work
-    # You will need to eliminate it when adding your code
-    return current_y
+    #Calculem la nova posició amb les variables que ens proporcionen
+    updated_y=current_y+(direction*speed)
+    #Si la posició de la paddle és negativa, vol dir que sortiria per dalt, així que l'igualem a 0, el límit superior de la seva posició
+    if updated_y < 0:
+        updated_y==0
+    #Si la posició + la llargada és més gran que la mida del taulell, la paddle sortiria per baix, així que l'igualem al límit inferior height-paddle_h
+    elif updated_y+paddle_h > height:
+        updated_y = height-paddle_h
+    return updated_y
 
 
 def move_ball(x: int, y: int, vx: int, vy: int) -> tuple[int, int]:
@@ -380,10 +385,10 @@ def move_ball(x: int, y: int, vx: int, vy: int) -> tuple[int, int]:
     """
 
     # TODO: put your code!!!!
-
-    # This line of code has been left for letting the full program work
-    # You will need to eliminate it when adding your code
-    return x, y
+    #Actualitzem la posició en x i y afegint la velocitat en un instant a la posició actual
+    updated_x=x+vx
+    updated_y=y+vy
+    return (updated_x,updated_y)
 
 
 def collide_ball_walls(x: int, y: int, vx: int, vy: int, radius: int, width: int, height: int) -> tuple[int, int, int, int]:
@@ -405,9 +410,12 @@ def collide_ball_walls(x: int, y: int, vx: int, vy: int, radius: int, width: int
         For precisely detecting collisions, you might need to consider the ball radius
     """
     # TODO: put your code!!!!
-
-    # This line of code has been left for letting the full program work
-    # You will need to eliminate it when adding your code
+    if y <= radius:
+        y=radius
+        vy=-vy
+    elif height <= y + radius:
+        y=height-radius
+        vy=-vy
     return x, y, vx, vy
 
 
@@ -460,11 +468,32 @@ def collide_ball_paddle(x: int, y: int, vx: int, vy: int, paddle_x: int, paddle_
     - The collision box ignores the ball's circular shape for simplicity,
       which is sufficient for this game.
     """
-    # TODO: put your code!!!!
-    hit = False
+    # TODO: put your code!!!!^
 
-    # This line of code has been left for letting the full program work
-    # You will need to eliminate it when adding your code
+    hit = False
+    #Definim quadrat pilota
+    ball_left= x-radius
+    ball_right= x+radius
+    ball_top= y-radius
+    ball_bottom= y+radius
+    #Definim rectangle paddle
+    paddle_left   = paddle_x
+    paddle_right  = paddle_x + paddle_w
+    paddle_top    = paddle_y
+    paddle_bottom = paddle_y + paddle_h
+
+    if ball_right >= paddle_left and ball_left <= paddle_right and ball_bottom >= paddle_top and ball_top <= paddle_bottom:
+        hit=True
+        #Mirem en quina de les dues paddles ha rebotat segons la velocitat en x i retornem la pilota al límit de contacte amb la paddle
+        if vx<0:
+            x =paddle_right + radius
+            #Afegim una variació de la velocitat horitzontal per a fer més divertit el joc
+            vx =-vx*rnd.choice([0.8,1,1,1,1.5])
+        elif vx>0:
+            x =paddle_left-radius
+            vx =-vx
+        #Canviem la velocitat horitzontal per simular el rebot
+
     return x, y, vx, vy, hit
 
 def reset_ball(center_x: int, center_y: int, vx0: int, vy0: int, to_right: bool) -> tuple[int, int, int, int]:
@@ -502,10 +531,14 @@ def reset_ball(center_x: int, center_y: int, vx0: int, vy0: int, to_right: bool)
     """
 
     # TODO: put your code!!!!
-
+    if to_right==True:
+        vx=vx0
+    else:
+        vx=-vx0
+    vy=vy0*rnd.uniform(0.7,1.5)*rnd.choice([-1,1])
     # This line of code has been left for letting the full program work
     # You will need to eliminate/modify it when adding your code
-    return center_x, center_y, vx0, vy0
+    return center_x, center_y, vx, vy
 
 
 

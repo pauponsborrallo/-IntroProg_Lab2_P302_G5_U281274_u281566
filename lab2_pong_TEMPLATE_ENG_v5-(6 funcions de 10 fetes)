@@ -487,12 +487,22 @@ def collide_ball_paddle(x: int, y: int, vx: int, vy: int, paddle_x: int, paddle_
         #Mirem en quina de les dues paddles ha rebotat segons la velocitat en x i retornem la pilota al límit de contacte amb la paddle
         if vx<0:
             x =paddle_right + radius
-            #Afegim una variació de la velocitat horitzontal per a fer més divertit el joc
-            vx =-vx*rnd.choice([0.8,1,1,1,1.5])
+
+            #Afegim una variació de la velocitat horitzontal per a fer més divertit el joc. Hi ha més probabilitat de que no varii de que aquesta varii.
+            if vx< -0.6:
+                #Canviem de signe la velocitat horitzontal per simular el rebot.
+                #El segon rnd.choice és per a que la pilota reboti a una velocitat molt alta, però hi ha una baixa probabilitat de que passi. :)
+                vx =-vx*rnd.choice([0.8,1,1,1,1.5])*rnd.choice([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,5])
+            #En el cas que vx sigui massa baixa la retornem a -1
+            else:
+                vx=-1
         elif vx>0:
             x =paddle_left-radius
-            vx =-vx
-        #Canviem la velocitat horitzontal per simular el rebot
+            if vx> 0.6:
+                vx =-vx*rnd.choice([0.8,1,1,1,1.5])
+            #El mateix però a 1 positiu
+            else:
+                vx=1
 
     return x, y, vx, vy, hit
 

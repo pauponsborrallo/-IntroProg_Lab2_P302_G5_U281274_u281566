@@ -582,10 +582,14 @@ def compute_ai_direction(ball_y: int, paddle_y: int, paddle_h: int) -> int:
     when the ball is aligned enough.
     """
     # TODO: put your code!!!!
-
-    # This line of code has been left for letting the full program work
-    # You will need to eliminate it when adding your code
-    return 0
+    paddle_center_high=(paddle_y-5)+paddle_h/2
+    paddle_center_low=(paddle_y+5)+paddle_h/2
+    if ball_y >paddle_center_low:
+            return 1
+    if ball_y<paddle_center_high:
+            return -1
+    else:
+        return 0
 
 # =============================================
 # Checking KEYS UP/DOWN (given to the students)
